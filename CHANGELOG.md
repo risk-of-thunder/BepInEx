@@ -1,7 +1,6 @@
 -   **5.4.2115**
 
     -   RoR2 BepInExPack specific changes :
-        -   mono.cecil: changed custom 0.11.4 dll to have more internal 0.10.4 versioning
         -   RoR2BepInExPack: Ensure remaining old dll in the plugins folder doesnt get loaded by BepInEx Chainloader
 
 - **5.4.2114**
