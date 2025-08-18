@@ -3,6 +3,7 @@
 #addin nuget:?package=Cake.Compression&version=0.2.6
 #addin nuget:?package=Cake.Json&version=6.0.1
 #addin nuget:?package=Newtonsoft.Json&version=13.0.1
+#tool nuget:?package=NuGet.CommandLine&version=5.9.1
 
 const string DOORSTOP_VER_WIN = "3.4.0.0";
 const string DOORSTOP_VER_NIX = "1.5.1.0";
