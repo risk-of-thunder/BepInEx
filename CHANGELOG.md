@@ -1,3 +1,8 @@
+-   **5.4.2122**
+
+    -   RoR2 BepInExPack specific changes :
+        -   Preloader: Hardcode ror2 entry point by not using a config file anymore. Due to how mod managers like r2modman work: If someone downloads a mod that depends on an old BepInEx version with a different entry point, and then updates their mods, the entry point doesn't get updated to the modern one. It doesn't get updated because the entry point is stored in a config file.
+
 -   **5.4.2121**
 
     -   RoR2 BepInExPack specific changes :
