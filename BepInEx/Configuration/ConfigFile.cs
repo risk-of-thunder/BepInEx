@@ -18,9 +18,6 @@ namespace BepInEx.Configuration
 
 		internal static ConfigFile CoreConfig { get; } = new ConfigFile(Paths.BepInExConfigPath, true);
 
-		// Config file not supposed to be changed by users, contains core core config
-		internal static ConfigFile DontModifyCoreConfig { get; } = new ConfigFile(Paths.BepInExDontModifyConfigPath, true);
-
 		/// <summary>
 		/// All config entries inside
 		/// </summary>

@@ -29,6 +29,10 @@ namespace BepInEx.Preloader
 
         public static bool IsPostUnity2017 { get; } = File.Exists(Path.Combine(Paths.ManagedPath, "UnityEngine.CoreModule.dll"));
 
+        internal static readonly string EntrypointAssembly = "RoR2.dll";
+        internal static readonly string EntrypointType = "Console";
+        internal static readonly string EntrypointMethod = ".cctor";
+
         public static void Run()
         {
             try
@@ -83,7 +87,7 @@ namespace BepInEx.Preloader
 
                 AssemblyPatcher.AddPatcher(new PatcherPlugin
                 {
-                    TargetDLLs = () => new[] { ConfigEntrypointAssembly.Value },
+                    TargetDLLs = () => new[] { EntrypointAssembly },
                     Patcher = PatchEntrypoint,
                     TypeName = "BepInEx.Chainloader"
                 });
@@ -149,16 +153,13 @@ namespace BepInEx.Preloader
             if (assembly.MainModule.AssemblyReferences.Any(x => x.Name.Contains("BepInEx")))
                 throw new Exception("BepInEx has been detected to be patched! Please unpatch before using a patchless variant!");
 
-            string entrypointType = ConfigEntrypointType.Value;
-            string entrypointMethod = ConfigEntrypointMethod.Value;
-
-            bool isCctor = entrypointMethod.IsNullOrWhiteSpace() || entrypointMethod == ".cctor";
+            bool isCctor = EntrypointMethod.IsNullOrWhiteSpace() || EntrypointMethod == ".cctor";
 
 
-            var entryType = assembly.MainModule.Types.FirstOrDefault(x => x.Name == entrypointType);
+            var entryType = assembly.MainModule.Types.FirstOrDefault(x => x.Name == EntrypointType);
 
             if (entryType == null)
-                throw new Exception("The entrypoint type is invalid! Please check your config/BepInEx.cfg file");
+                throw new Exception("The entrypoint type is invalid! Please report to RoR2 BepInEx maintainers.");
 
             using (var injected = AssemblyDefinition.ReadAssembly(Paths.BepInExAssemblyPath))
             {
@@ -193,7 +194,7 @@ namespace BepInEx.Preloader
                 }
                 else
                 {
-                    methods.AddRange(entryType.Methods.Where(x => x.Name == entrypointMethod));
+                    methods.AddRange(entryType.Methods.Where(x => x.Name == EntrypointMethod));
                 }
 
                 if (!methods.Any())
@@ -278,21 +279,6 @@ namespace BepInEx.Preloader
         }
 
         #region Config
-
-        private static readonly ConfigEntry<string> ConfigEntrypointAssembly = ConfigFile.DontModifyCoreConfig.Bind(
-            "Preloader.Entrypoint", "Assembly",
-            "RoR2.dll",
-            "The local filename of the assembly to target.");
-
-        private static readonly ConfigEntry<string> ConfigEntrypointType = ConfigFile.DontModifyCoreConfig.Bind(
-            "Preloader.Entrypoint", "Type",
-            "Console",
-            "The name of the type in the entrypoint assembly to search for the entrypoint method.");
-
-        private static readonly ConfigEntry<string> ConfigEntrypointMethod = ConfigFile.DontModifyCoreConfig.Bind(
-            "Preloader.Entrypoint", "Method",
-            ".cctor",
-            "The name of the method in the specified entrypoint assembly and type to hook and load Chainloader from.");
 
         internal static readonly ConfigEntry<bool> ConfigApplyRuntimePatches = ConfigFile.CoreConfig.Bind(
             "Preloader", "ApplyRuntimePatches",
